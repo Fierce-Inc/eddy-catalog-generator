@@ -104,7 +104,7 @@ The brand should reflect the core values of sustainability, body positivity, emp
     ("human", """Create a COMPLETELY DIFFERENT brand profile (NOT Fierce Evergreen Apparel) with the following structure:
 
 {{
-    "id": "unique_brand_id",
+    "id": "{brand_id}",
     "name": "Unique brand name",
     "description": "2-3 sentence brand description",
     "story": "Brand founding story (2-3 sentences)",
@@ -128,7 +128,7 @@ Collections should reflect the Pacific Northwest aesthetic and the brand's core 
     ("human", """Create a collection profile with the following structure:
 
 {{
-    "id": "unique_collection_id",
+    "id": "{collection_id}",
     "name": "Collection name",
     "description": "Collection description (2-3 sentences)",
     "season": "Spring|Summer|Fall|Winter|All-Season",
@@ -155,11 +155,12 @@ Products should be versatile, comfortable, and suitable for everyday wear with a
 
 Gender distribution: {gender_distribution}
 Categories: {categories}
+Product IDs to use: {product_ids}
 
-Each product should follow this JSON structure:
+Each product should follow this JSON structure, using the provided IDs in order:
 
 {{
-    "id": "unique_sku_id",
+    "id": "use_next_id_from_product_ids_list",
     "name": "Product name",
     "description": "Detailed product description",
     "category": "Product category",
@@ -183,6 +184,7 @@ Guidelines:
 - Include sustainability features
 - Ensure size inclusivity
 - Focus on versatility and comfort
+- Use the provided product IDs in the exact order they appear in the list
 
 IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ])
@@ -201,11 +203,12 @@ Reviews should be realistic, varied in tone and rating, and mention specific pro
 Product: {product_name}
 Category: {product_category}
 Price: ${product_price}
+Review IDs to use: {review_ids}
 
-Each review should follow this JSON structure:
+Each review should follow this JSON structure, using the provided IDs in order:
 
 {{
-    "id": "unique_review_id",
+    "id": "use_next_id_from_review_ids_list",
     "product_id": "{product_id}",
     "customer_name": "Customer name",
     "rating": 1-5,
@@ -224,6 +227,7 @@ Guidelines:
 - Include Pacific Northwest lifestyle references
 - Vary review length and helpfulness
 - Use realistic customer names
+- Use the provided review IDs in the exact order they appear in the list
 
 IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ]) 

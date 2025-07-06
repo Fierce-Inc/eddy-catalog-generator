@@ -12,6 +12,7 @@ from pydantic import SecretStr
 
 from src.schema import Product, Review
 from src.prompts import REVIEW_GENERATION_PROMPT
+from src.utils.id_generator import IDGenerator
 
 
 class ReviewGenerator:
@@ -32,6 +33,7 @@ class ReviewGenerator:
         )
         self.batch_size = batch_size
         self.max_retries = max_retries
+        self.id_generator = IDGenerator()
     
     async def generate_reviews(
         self,
@@ -61,6 +63,7 @@ class ReviewGenerator:
                 reviews.extend(product_reviews)
                 pbar.update(1)
         
+        print(f"Generated {len(reviews)} reviews with pre-generated unique IDs")
         return reviews
     
     async def _generate_product_reviews(
@@ -80,10 +83,14 @@ class ReviewGenerator:
         product_reviews = []
         
         for batch_count in batches:
+            # Pre-generate unique review IDs for this batch
+            batch_review_ids = self.id_generator.generate_review_ids(batch_count)
+            
             batch_reviews = await self._generate_batch_with_retry(
                 brand_context=brand_context,
                 product=product,
-                batch_count=batch_count
+                batch_count=batch_count,
+                review_ids=batch_review_ids
             )
             product_reviews.extend(batch_reviews)
         
@@ -93,27 +100,29 @@ class ReviewGenerator:
         self,
         brand_context: str,
         product: Product,
-        batch_count: int
+        batch_count: int,
+        review_ids: List[str]
     ) -> List[Review]:
-        """Generate a batch of reviews with retry logic."""
+        """Generate a batch of reviews with pre-generated IDs."""
         
         for attempt in range(self.max_retries):
             try:
-                # Format prompt with product details
+                # Format prompt with product details and pre-generated review IDs
                 messages = REVIEW_GENERATION_PROMPT.format_messages(
                     brand_context=brand_context,
                     batch_size=batch_count,
                     product_name=product.name,
                     product_category=product.category,
                     product_price=product.price,
-                    product_id=product.id
+                    product_id=product.id,
+                    review_ids=review_ids
                 )
                 
                 # Generate response
                 response = await self.llm.ainvoke(messages)
                 content = response.content
                 
-                print(f"DEBUG: LLM response for review batch: {content[:200]}...")
+                print(f"DEBUG: LLM response for review batch (attempt {attempt+1}): {content[:200]}...")
                 
                 # Parse JSON response
                 if isinstance(content, str):
@@ -121,16 +130,27 @@ class ReviewGenerator:
                 else:
                     reviews_data = content  # Already parsed
                 
-                # Validate and create Review objects
+                # Validate and create Review objects with pre-generated IDs
                 reviews = []
-                for review_data in reviews_data:
+                
+                for i, review_data in enumerate(reviews_data):
+                    # Ensure the ID matches what we provided
+                    expected_id = review_ids[i] if i < len(review_ids) else None
+                    if expected_id and review_data.get("id") != expected_id:  # type: ignore
+                        review_data["id"] = expected_id  # type: ignore
+                    
                     # Add realistic review date
                     if "review_date" not in review_data:
                         review_data["review_date"] = self._generate_review_date()  # type: ignore
                     
-                    review = Review(**review_data)  # type: ignore
-                    reviews.append(review)
+                    try:
+                        review = Review(**review_data)  # type: ignore
+                        reviews.append(review)
+                    except (ValueError, TypeError) as e:
+                        print(f"Warning: Invalid review data: {e}, skipping review")
+                        continue
                 
+                print(f"Successfully generated {len(reviews)} reviews in batch")
                 return reviews
                 
             except (json.JSONDecodeError, ValueError) as e:

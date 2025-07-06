@@ -5,11 +5,11 @@ import os
 from typing import List
 
 from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
 from pydantic import SecretStr
 
 from src.schema import Brand
 from src.prompts import BRAND_GENERATION_PROMPT
+from src.utils.id_generator import IDGenerator
 
 
 class BrandGenerator:
@@ -26,6 +26,7 @@ class BrandGenerator:
             temperature=temperature,
             api_key=SecretStr(os.getenv("OPENAI_API_KEY", "")),
         )
+        self.id_generator = IDGenerator()
     
     async def generate_brands(self, brand_context: str, count: int = 5) -> List[Brand]:
         """Generate brand profiles.
@@ -37,17 +38,20 @@ class BrandGenerator:
         Returns:
             List of generated Brand objects
         """
+        # Pre-generate unique brand IDs
+        brand_ids = self.id_generator.generate_brand_ids(count)
         brands = []
-        generated_names = set()
-        generated_ids = set()
         
-        for i in range(count):
-            max_attempts = 3  # Try up to 3 times for uniqueness
+        for i, brand_id in enumerate(brand_ids):
+            max_attempts = 3  # Reduced attempts since IDs are pre-generated
+            brand_generated = False
+            
             for attempt in range(max_attempts):
                 try:
-                    # Format prompt with brand context
+                    # Format prompt with brand context and pre-generated ID
                     messages = BRAND_GENERATION_PROMPT.format_messages(
-                        brand_context=brand_context
+                        brand_context=brand_context,
+                        brand_id=brand_id
                     )
                     
                     # Generate response
@@ -62,23 +66,21 @@ class BrandGenerator:
                     else:
                         brand_data = content  # Already parsed
                     
-                    # Check for uniqueness
+                    # Validate required fields
                     brand_name = brand_data.get("name", "").strip()  # type: ignore
-                    brand_id = brand_data.get("id", "").strip()  # type: ignore
-                    
-                    if brand_name in generated_names:
-                        print(f"Warning: Duplicate brand name '{brand_name}', retrying...")
+                    if not brand_name:
+                        print(f"Warning: Missing name for brand {i+1} (attempt {attempt+1}), retrying...")
                         continue
                     
-                    if brand_id in generated_ids:
-                        print(f"Warning: Duplicate brand ID '{brand_id}', retrying...")
-                        continue
+                    # Ensure the ID matches what we provided
+                    if brand_data.get("id") != brand_id:  # type: ignore
+                        brand_data["id"] = brand_id  # type: ignore
                     
                     # Validate and create Brand object
                     brand = Brand(**brand_data)  # type: ignore
                     brands.append(brand)
-                    generated_names.add(brand_name)
-                    generated_ids.add(brand_id)
+                    brand_generated = True
+                    print(f"Successfully generated brand {i+1}: {brand_name} (ID: {brand_id})")
                     break  # Success, move to next brand
                     
                 except (json.JSONDecodeError, ValueError) as e:
@@ -86,5 +88,9 @@ class BrandGenerator:
                     if attempt == max_attempts - 1:
                         print(f"Failed to generate brand {i+1} after {max_attempts} attempts")
                     continue
+            
+            if not brand_generated:
+                print(f"Warning: Could not generate brand {i+1} after {max_attempts} attempts")
         
+        print(f"Generated {len(brands)} brands with pre-generated unique IDs")
         return brands 

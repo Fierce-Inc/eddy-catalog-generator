@@ -17,6 +17,7 @@ from src.prompts import (
     BRAND_COLORS,
     PRICE_BANDS
 )
+from src.utils.id_generator import IDGenerator
 
 
 class ProductGenerator:
@@ -37,6 +38,7 @@ class ProductGenerator:
         )
         self.batch_size = batch_size
         self.max_retries = max_retries
+        self.id_generator = IDGenerator()
     
     async def generate_products(
         self,
@@ -67,6 +69,9 @@ class ProductGenerator:
             for batch_idx in range(num_batches):
                 batch_count = min(self.batch_size, total_count - len(products))
                 
+                # Pre-generate unique product IDs for this batch
+                batch_product_ids = self.id_generator.generate_product_ids(batch_count)
+                
                 # Select random brand and collection for this batch
                 if not brand_ids:
                     print("Warning: No brand IDs available, using default")
@@ -86,14 +91,15 @@ class ProductGenerator:
                 # Select categories for this batch
                 categories = self._select_categories(batch_count)
                 
-                # Generate batch with retry logic
+                # Generate batch with pre-generated IDs
                 batch_products = await self._generate_batch_with_retry(
                     brand_context=brand_context,
                     brand_id=brand_id,
                     collection_id=collection_id,
                     gender_distribution=gender_distribution,
                     categories=categories,
-                    batch_count=batch_count
+                    batch_count=batch_count,
+                    product_ids=batch_product_ids
                 )
                 
                 products.extend(batch_products)
@@ -102,6 +108,7 @@ class ProductGenerator:
                 if len(products) >= total_count:
                     break
         
+        print(f"Generated {len(products)} products with pre-generated unique IDs")
         return products[:total_count]
     
     def _get_gender_distribution(self, batch_count: int) -> Dict[str, int]:
@@ -136,13 +143,14 @@ class ProductGenerator:
         collection_id: str,
         gender_distribution: Dict[str, int],
         categories: List[str],
-        batch_count: int
+        batch_count: int,
+        product_ids: List[str]
     ) -> List[Product]:
-        """Generate a batch of products with retry logic."""
+        """Generate a batch of products with pre-generated IDs."""
         
         for attempt in range(self.max_retries):
             try:
-                # Format prompt with all parameters
+                # Format prompt with all parameters including pre-generated product IDs
                 messages = PRODUCT_GENERATION_PROMPT.format_messages(
                     brand_context=brand_context,
                     batch_size=batch_count,
@@ -152,14 +160,15 @@ class ProductGenerator:
                     brand_id=brand_id,
                     brand_colors=BRAND_COLORS,
                     min_price=PRICE_BANDS["budget"][0],
-                    max_price=PRICE_BANDS["luxury"][1]
+                    max_price=PRICE_BANDS["luxury"][1],
+                    product_ids=product_ids
                 )
                 
                 # Generate response
                 response = await self.llm.ainvoke(messages)
                 content = response.content
                 
-                print(f"DEBUG: LLM response for product batch: {content[:200]}...")
+                print(f"DEBUG: LLM response for product batch (attempt {attempt+1}): {content[:200]}...")
                 
                 # Parse JSON response
                 if isinstance(content, str):
@@ -167,12 +176,23 @@ class ProductGenerator:
                 else:
                     products_data = content  # Already parsed
                 
-                # Validate and create Product objects
+                # Validate and create Product objects with pre-generated IDs
                 products = []
-                for product_data in products_data:
-                    product = Product(**product_data)  # type: ignore
-                    products.append(product)
                 
+                for i, product_data in enumerate(products_data):
+                    # Ensure the ID matches what we provided
+                    expected_id = product_ids[i] if i < len(product_ids) else None
+                    if expected_id and product_data.get("id") != expected_id:  # type: ignore
+                        product_data["id"] = expected_id  # type: ignore
+                    
+                    try:
+                        product = Product(**product_data)  # type: ignore
+                        products.append(product)
+                    except (ValueError, TypeError) as e:
+                        print(f"Warning: Invalid product data: {e}, skipping product")
+                        continue
+                
+                print(f"Successfully generated {len(products)} products in batch")
                 return products
                 
             except (json.JSONDecodeError, ValueError) as e:
