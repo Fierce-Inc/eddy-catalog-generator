@@ -10,6 +10,7 @@ from pydantic import SecretStr
 from src.schema import Brand
 from src.prompts import BRAND_GENERATION_PROMPT
 from src.utils.id_generator import IDGenerator
+from src.utils.name_validator import deduplicate_brand_names
 
 
 class BrandGenerator:
@@ -93,4 +94,21 @@ class BrandGenerator:
                 print(f"Warning: Could not generate brand {i+1} after {max_attempts} attempts")
         
         print(f"Generated {len(brands)} brands with pre-generated unique IDs")
-        return brands 
+        
+        # Final deduplication of brand names
+        print("Performing final brand name deduplication...")
+        brands_dict = [brand.dict() for brand in brands]
+        final_deduplicated = deduplicate_brand_names(brands_dict)
+        
+        # Convert back to Brand objects
+        final_brands = []
+        for brand_dict in final_deduplicated:
+            try:
+                brand = Brand(**brand_dict)
+                final_brands.append(brand)
+            except (ValueError, TypeError) as e:
+                print(f"Warning: Invalid brand data in final deduplication: {e}, skipping brand")
+                continue
+        
+        print(f"Final brand count after deduplication: {len(final_brands)}")
+        return final_brands 

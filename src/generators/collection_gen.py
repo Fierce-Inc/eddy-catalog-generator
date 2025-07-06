@@ -10,6 +10,7 @@ from pydantic import SecretStr
 from src.schema import Collection
 from src.prompts import COLLECTION_GENERATION_PROMPT
 from src.utils.id_generator import IDGenerator
+from src.utils.name_validator import deduplicate_collection_names
 
 
 class CollectionGenerator:
@@ -106,4 +107,21 @@ class CollectionGenerator:
                 print(f"Warning: Could not generate collection {i+1} after {max_attempts} attempts")
         
         print(f"Generated {len(collections)} collections with pre-generated unique IDs")
-        return collections 
+        
+        # Final deduplication of collection names
+        print("Performing final collection name deduplication...")
+        collections_dict = [collection.dict() for collection in collections]
+        final_deduplicated = deduplicate_collection_names(collections_dict)
+        
+        # Convert back to Collection objects
+        final_collections = []
+        for collection_dict in final_deduplicated:
+            try:
+                collection = Collection(**collection_dict)
+                final_collections.append(collection)
+            except (ValueError, TypeError) as e:
+                print(f"Warning: Invalid collection data in final deduplication: {e}, skipping collection")
+                continue
+        
+        print(f"Final collection count after deduplication: {len(final_collections)}")
+        return final_collections 

@@ -18,6 +18,7 @@ from src.prompts import (
     PRICE_BANDS
 )
 from src.utils.id_generator import IDGenerator
+from src.utils.name_validator import NameValidator, deduplicate_product_names
 
 
 class ProductGenerator:
@@ -39,6 +40,7 @@ class ProductGenerator:
         self.batch_size = batch_size
         self.max_retries = max_retries
         self.id_generator = IDGenerator()
+        self.name_validator = NameValidator()
     
     async def generate_products(
         self,
@@ -109,7 +111,24 @@ class ProductGenerator:
                     break
         
         print(f"Generated {len(products)} products with pre-generated unique IDs")
-        return products[:total_count]
+        
+        # Final deduplication across all batches
+        print("Performing final name deduplication...")
+        products_dict = [product.dict() for product in products]
+        final_deduplicated = deduplicate_product_names(products_dict)
+        
+        # Convert back to Product objects
+        final_products = []
+        for product_dict in final_deduplicated:
+            try:
+                product = Product(**product_dict)
+                final_products.append(product)
+            except (ValueError, TypeError) as e:
+                print(f"Warning: Invalid product data in final deduplication: {e}, skipping product")
+                continue
+        
+        print(f"Final product count after deduplication: {len(final_products)}")
+        return final_products[:total_count]
     
     def _get_gender_distribution(self, batch_count: int) -> Dict[str, int]:
         """Calculate gender distribution for a batch."""
@@ -190,6 +209,20 @@ class ProductGenerator:
                         products.append(product)
                     except (ValueError, TypeError) as e:
                         print(f"Warning: Invalid product data: {e}, skipping product")
+                        continue
+                
+                # Validate name uniqueness within this batch
+                batch_products_dict = [product.dict() for product in products]
+                deduplicated_batch = deduplicate_product_names(batch_products_dict)
+                
+                # Convert back to Product objects
+                products = []
+                for product_dict in deduplicated_batch:
+                    try:
+                        product = Product(**product_dict)
+                        products.append(product)
+                    except (ValueError, TypeError) as e:
+                        print(f"Warning: Invalid product data after deduplication: {e}, skipping product")
                         continue
                 
                 print(f"Successfully generated {len(products)} products in batch")

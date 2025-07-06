@@ -113,6 +113,14 @@ The brand should reflect the core values of sustainability, body positivity, emp
 }}
 
 Create a brand that COMPLEMENTS Fierce Evergreen Apparel but is completely distinct. Think of it as a partner brand or sister brand with its own unique identity, name, and story. Do NOT use "Fierce Evergreen" in the name.
+
+CRITICAL REQUIREMENTS:
+- The brand name must be completely unique and different from any existing brands
+- Avoid generic naming patterns - be creative and specific
+- Use distinctive words that reflect the brand's unique identity and values
+- Consider using location-inspired names, nature elements, or unique descriptors
+- Ensure the name is memorable and aligns with the brand's story and values
+
 IMPORTANT: Return ONLY valid JSON. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ])
 
@@ -139,6 +147,15 @@ Collections should reflect the Pacific Northwest aesthetic and the brand's core 
 }}
 
 The collection should align with Fierce Evergreen's product portfolio focus and target audience.
+
+CRITICAL REQUIREMENTS:
+- The collection name must be completely unique and different from any existing collections
+- Avoid generic naming patterns - be creative and specific with each collection name
+- Use descriptive modifiers, seasonal themes, or unique concepts to differentiate collections
+- Consider using location-inspired names, nature elements, or distinctive descriptors
+- Ensure the name reflects the collection's theme, season, and target audience
+- Each collection should have a distinct identity while maintaining brand consistency
+
 IMPORTANT: Return ONLY valid JSON. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ])
 
@@ -185,6 +202,9 @@ Guidelines:
 - Ensure size inclusivity
 - Focus on versatility and comfort
 - Use the provided product IDs in the exact order they appear in the list
+- CRITICAL: Each product name must be completely unique and different from all others
+- Avoid generic naming patterns - be creative and specific with each name
+- Use descriptive modifiers, style variations, or unique features to differentiate similar items
 
 IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ])
