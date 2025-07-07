@@ -206,6 +206,17 @@ Guidelines:
 - Avoid generic naming patterns - be creative and specific with each name
 - Use descriptive modifiers, style variations, or unique features to differentiate similar items
 
+IMPORTANT SIZING GUIDELINES:
+- For clothing items: Provide specific sizes (e.g., ["S", "M", "L", "XL"] or ["6", "7", "8", "9", "10"] or ["30", "32", "34", "36"])
+- For accessories (scarves, bags, beanies, caps, gloves, flasks, sunglasses): Use ["One Size"] for sizes
+- For footwear: Provide specific sizes (e.g., ["6", "7", "8", "9", "10"] or ["8", "9", "10", "11", "12"])
+- For belts: Use ["S", "M", "L"] for sizes
+
+IMPORTANT FIT GUIDELINES:
+- For clothing items: Provide specific fit descriptions (e.g., "Regular fit", "Relaxed fit", "Tailored fit")
+- For accessories: Use "Standard" for fit
+- For footwear: Use "True to size" for fit
+
 IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ])
 
@@ -248,6 +259,9 @@ Guidelines:
 - Vary review length and helpfulness
 - Use realistic customer names
 - Use the provided review IDs in the exact order they appear in the list
+- For size_worn: Use actual size (e.g., "M", "L", "10") or null if not applicable
+- For color_purchased: Use actual color name (e.g., "Charcoal", "Ocean Blue") or null if not applicable
+- Do not use empty strings - use null for missing values
 
 IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, markdown formatting, or code blocks."""),
 ]) 

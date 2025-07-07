@@ -85,13 +85,13 @@ class Product(BaseModel):
             "collection_id": self.collection_id,
             "brand_id": self.brand_id,
             "price": self.price,
-            "colors": "|".join(self.colors),
-            "sizes": "|".join(self.sizes),
-            "materials": "|".join(self.materials),
-            "fit": self.fit,
-            "sustainability_features": "|".join(self.sustainability_features),
-            "care_instructions": self.care_instructions,
-            "features": "|".join(self.features),
+            "colors": "|".join(self.colors) if self.colors else "N/A",
+            "sizes": "|".join(self.sizes) if self.sizes else "One Size",
+            "materials": "|".join(self.materials) if self.materials else "N/A",
+            "fit": self.fit if self.fit else "Standard",
+            "sustainability_features": "|".join(self.sustainability_features) if self.sustainability_features else "N/A",
+            "care_instructions": self.care_instructions if self.care_instructions else "N/A",
+            "features": "|".join(self.features) if self.features else "N/A",
         }
 
 
@@ -122,6 +122,6 @@ class Review(BaseModel):
             "verified_purchase": self.verified_purchase,
             "helpful_votes": self.helpful_votes,
             "review_date": self.review_date,
-            "size_worn": self.size_worn or "",
-            "color_purchased": self.color_purchased or "",
+            "size_worn": self.size_worn if self.size_worn is not None else "N/A",
+            "color_purchased": self.color_purchased if self.color_purchased is not None else "N/A",
         } 
