@@ -14,9 +14,15 @@ from pydantic import SecretStr
 load_dotenv()
 
 
-def _read_brand_guide() -> str:
-    """Read the brand guide markdown file."""
-    guide_path = Path(__file__).parent.parent.parent / "docs" / "brand_guide.md"
+def _read_brand_guide(filename: Optional[str] = None) -> str:
+    """Read the brand guide markdown file.
+    
+    Args:
+        filename: Optional brand guide filename inside the hardcoded `docs` directory.
+                  Defaults to "brand_guide.md" if not provided.
+    """
+    guide_filename = filename or "brand_guide.md"
+    guide_path = Path(__file__).parent.parent.parent / "docs" / guide_filename
     if not guide_path.exists():
         raise FileNotFoundError(f"Brand guide not found at {guide_path}")
     
@@ -62,18 +68,19 @@ Focus on actionable details that will guide product and content generation."""
     return str(response.content)  # type: ignore
 
 
-@lru_cache(maxsize=1)
-def get_brand_context(max_tokens: Optional[int] = 300) -> str:
+@lru_cache(maxsize=16)
+def get_brand_context(max_tokens: Optional[int] = 300, brand_guide_filename: Optional[str] = None) -> str:
     """Get brand context from the guide, optionally summarized.
     
     Args:
         max_tokens: Maximum tokens for the context. If None, returns full guide.
                    If guide exceeds this limit, it will be summarized.
+        brand_guide_filename: Optional brand guide filename inside the hardcoded `docs` directory.
     
     Returns:
         Brand context string suitable for inclusion in prompts.
     """
-    content = _read_brand_guide()
+    content = _read_brand_guide(brand_guide_filename)
     
     if max_tokens is None:
         return content

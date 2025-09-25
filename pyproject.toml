@@ -5,9 +5,9 @@ build-backend = "hatchling.build"
 [project]
 name = "eddy-catalog-generator"
 version = "0.1.0"
-description = "Synthetic catalog generator for Fierce Evergreen Apparel"
+description = "Synthetic catalog generator for any brand"
 authors = [
-    {name = "Fierce Evergreen Team", email = "team@fierceevergreen.com"}
+    {name = "Eddy Catalog Team", email = "team@eddycatalog.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.9"

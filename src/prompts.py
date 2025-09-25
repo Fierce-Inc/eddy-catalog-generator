@@ -1,107 +1,64 @@
 """Prompt templates for catalog generation."""
 
+import json
+from pathlib import Path
+from typing import Dict, Any
 from langchain.prompts import ChatPromptTemplate
 
-# Generation constants
-GENDER_DISTRIBUTION = {
-    "women": 0.45,
-    "men": 0.45,
-    "unisex": 0.10,
-}
 
-# Product categories and subcategories based on brand guide
-PRODUCT_CATEGORIES = {
-    "Everyday Apparel": [
-        "Relaxed Denim",
-        "Stretch Chinos", 
-        "Essential Tees",
-        "Knit Polos",
-        "Tunic Shirts",
-        "Wrap Dresses"
-    ],
-    "Work & Evening Wear": [
-        "Tailored Blazers",
-        "Smart Joggers",
-        "Polished Midi Dresses",
-        "Stretch Dress Pants",
-        "Button-Down Shirts"
-    ],
-    "Everyday Outerwear": [
-        "City Trenches",
-        "Commuter Rain Jackets",
-        "Quilted Bombers",
-        "Lightweight Jackets",
-        "Cardigans"
-    ],
-    "Active & Outdoor Layers": [
-        "Packable Anoraks",
-        "Trail Leggings",
-        "Merino Base Layers",
-        "Brushed-Back Leggings",
-        "Performance Tees"
-    ],
-    "Accessories": [
-        "Beanies",
-        "Crossbody Bags",
-        "Scarves",
-        "Sunglasses",
-        "Belts",
-        "Hats"
-    ],
-    "Footwear": [
-        "Slip-On Sneakers",
-        "Low Hikers",
-        "Dressy Booties",
-        "City Hikers",
-        "Casual Loafers"
-    ]
-}
+def load_brand_config(config_filename: str = "evergreen.json") -> Dict[str, Any]:
+    """Load brand configuration from JSON file in docs directory.
+    
+    Args:
+        config_filename: Name of the JSON configuration file in docs/
+        
+    Returns:
+        Dictionary containing brand configuration
+    """
+    config_path = Path(__file__).parent.parent / "docs" / config_filename
+    if not config_path.exists():
+        raise FileNotFoundError(f"Brand configuration not found at {config_path}")
+    
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-# Brand color palette from guide
-BRAND_COLORS = [
-    "Evergreen", "Ocean Blue", "Urban Mist", "Rust Peak",
-    "Charcoal", "Cream", "Navy", "Olive", "Burgundy", "Sage"
-]
 
-# Size ranges
-SIZE_RANGES = {
-    "women": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
-    "men": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
-    "unisex": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"]
-}
-
-# Price bands (in USD)
-PRICE_BANDS = {
-    "budget": (25, 75),
-    "mid": (75, 150),
-    "premium": (150, 300),
-    "luxury": (300, 500)
-}
-
-# Fit descriptions
-FIT_DESCRIPTIONS = [
-    "relaxed", "tailored", "slim", "oversized", "regular", 
-    "comfortable", "fitted", "loose", "modern", "classic"
-]
-
-# Sustainability features
-SUSTAINABILITY_FEATURES = [
-    "Recycled polyester", "Organic cotton", "Tencel lyocell",
-    "Repreve fibers", "Piñatex", "Low-impact dyes",
-    "Circular design", "Repair-friendly construction",
-    "Biodegradable packaging", "Fair trade certified"
-]
+def get_brand_constants(config_filename: str = "evergreen.json") -> Dict[str, Any]:
+    """Get brand constants from configuration file.
+    
+    Args:
+        config_filename: Name of the JSON configuration file in docs/
+        
+    Returns:
+        Dictionary containing all brand constants
+    """
+    config = load_brand_config(config_filename)
+    
+    # Convert price bands from lists to tuples for consistency
+    price_bands = {}
+    for band, values in config["price_bands"].items():
+        price_bands[band] = tuple(values)
+    
+    return {
+        "GENDER_DISTRIBUTION": config["gender_distribution"],
+        "PRODUCT_CATEGORIES": config["product_categories"],
+        "BRAND_COLORS": config["brand_colors"],
+        "SIZE_RANGES": config["size_ranges"],
+        "PRICE_BANDS": price_bands,
+        "FIT_DESCRIPTIONS": config["fit_descriptions"],
+        "SUSTAINABILITY_FEATURES": config["sustainability_features"]
+    }
 
 
 # Brand generation prompt
 BRAND_GENERATION_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a brand strategist creating brand profiles for Fierce Evergreen Apparel.
+    ("system", """You are a brand strategist creating brand profiles.
 
 {brand_context}
 
-Generate a comprehensive brand profile that aligns with the Fierce Evergreen brand identity.
-The brand should reflect the core values of sustainability, body positivity, empowerment, and transparency."""),
-    ("human", """Create a COMPLETELY DIFFERENT brand profile (NOT Fierce Evergreen Apparel) with the following structure:
+Generate a comprehensive brand profile that aligns with the provided brand identity.
+The brand should reflect the core values and characteristics defined in the brand guide."""),
+    ("human", """Create a COMPLETELY DIFFERENT brand profile with the following structure:
 
 {{
     "id": "{brand_id}",
@@ -112,7 +69,7 @@ The brand should reflect the core values of sustainability, body positivity, emp
     "target_audience": "Target customer description"
 }}
 
-Create a brand that COMPLEMENTS Fierce Evergreen Apparel but is completely distinct. Think of it as a partner brand or sister brand with its own unique identity, name, and story. Do NOT use "Fierce Evergreen" in the name.
+Create a brand that COMPLEMENTS the main brand but is completely distinct. Think of it as a partner brand or sister brand with its own unique identity, name, and story.
 
 CRITICAL REQUIREMENTS:
 - The brand name must be completely unique and different from any existing brands
@@ -127,12 +84,12 @@ IMPORTANT: Return ONLY valid JSON. Do not include any explanatory text, markdown
 
 # Collection generation prompt
 COLLECTION_GENERATION_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a fashion collection designer for Fierce Evergreen Apparel.
+    ("system", """You are a fashion collection designer.
 
 {brand_context}
 
-Create collections that embody the brand's commitment to sustainability, inclusivity, and everyday versatility.
-Collections should reflect the Pacific Northwest aesthetic and the brand's core values."""),
+Create collections that embody the brand's core values and aesthetic.
+Collections should reflect the brand's identity and target audience."""),
     ("human", """Create a collection profile with the following structure:
 
 {{
@@ -146,7 +103,7 @@ Collections should reflect the Pacific Northwest aesthetic and the brand's core 
     "theme": "Collection theme or inspiration"
 }}
 
-The collection should align with Fierce Evergreen's product portfolio focus and target audience.
+The collection should align with the brand's product portfolio focus and target audience.
 
 CRITICAL REQUIREMENTS:
 - The collection name must be completely unique and different from any existing collections
@@ -162,12 +119,12 @@ IMPORTANT: Return ONLY valid JSON. Do not include any explanatory text, markdown
 
 # Product generation prompt
 PRODUCT_GENERATION_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a product designer for Fierce Evergreen Apparel.
+    ("system", """You are a product designer.
 
 {brand_context}
 
-Create products that embody the brand's values: sustainability, body positivity, functionality, and timeless style.
-Products should be versatile, comfortable, and suitable for everyday wear with a Pacific Northwest aesthetic."""),
+Create products that embody the brand's values and aesthetic.
+Products should align with the brand's identity and target audience."""),
     ("human", """Generate {batch_size} products with the following specifications:
 
 Gender distribution: {gender_distribution}
@@ -223,7 +180,7 @@ IMPORTANT: Return ONLY valid JSON array. Do not include any explanatory text, ma
 
 # Review generation prompt
 REVIEW_GENERATION_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a customer review generator for Fierce Evergreen Apparel.
+    ("system", """You are a customer review generator.
 
 {brand_context}
 

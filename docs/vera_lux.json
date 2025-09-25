@@ -1,0 +1,111 @@
+{
+  "gender_distribution": {
+    "women": 0.95,
+    "men": 0.0,
+    "unisex": 0.05
+  },
+  "product_categories": {
+    "Couture Apparel": [
+      "Sculptural Evening Gowns",
+      "Statement Jackets",
+      "Limited-Edition Dresses",
+      "Tailored Capes"
+    ],
+    "Ready-to-Wear": [
+      "Architectural Coats",
+      "Silk Blouses",
+      "Tailored Trousers",
+      "Structured Midi Skirts"
+    ],
+    "Footwear": [
+      "Heeled Boots",
+      "Architectural Pumps",
+      "Sculptural Sandals"
+    ],
+    "Jewelry": [
+      "Bold Cuffs",
+      "Statement Earrings",
+      "Layered Chains"
+    ],
+    "Bags & Belts": [
+      "Structured Handbags",
+      "Oversized Belts",
+      "Evening Clutches"
+    ],
+    "Scarves": [
+      "Silk Prints",
+      "Bio-Fabric Scarves"
+    ],
+    "Perfume": [
+      "Signature Eau de Parfum",
+      "Limited-Edition Extraits"
+    ]
+  },
+  "brand_colors": [
+    "Garnet Red",
+    "Obsidian Black",
+    "Gold Veil",
+    "Pearl White",
+    "Midnight Blue",
+    "Emerald Green",
+    "Amethyst Purple",
+    "Rose Quartz",
+    "Champagne Gold",
+    "Deep Charcoal"
+  ],
+  "size_ranges": {
+    "women": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2X"
+    ],
+    "men": [],
+    "unisex": [
+      "OS"
+    ]
+  },
+  "price_bands": {
+    "budget": [
+      150,
+      300
+    ],
+    "mid": [
+      300,
+      800
+    ],
+    "premium": [
+      800,
+      2000
+    ],
+    "luxury": [
+      2000,
+      5000
+    ]
+  },
+  "fit_descriptions": [
+    "sculptural",
+    "tailored",
+    "form-fitting",
+    "fluid",
+    "architectural",
+    "draped",
+    "corseted",
+    "structured",
+    "relaxed-elegant"
+  ],
+  "sustainability_features": [
+    "Transparent sourcing",
+    "Low-impact dyes",
+    "Circular design",
+    "Repair-friendly construction",
+    "Biodegradable packaging",
+    "Recycled metals (hardware, jewelry)",
+    "Lab-grown gemstones",
+    "Organic & peace silk",
+    "Traceable leather & bio-based alternatives",
+    "Limited collections to reduce overproduction"
+  ]
+}

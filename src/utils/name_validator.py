@@ -320,11 +320,18 @@ def deduplicate_product_names(products: List[Dict]) -> List[Dict]:
             updated_products.append(product)
         else:
             # Name is duplicate, generate new name
+            # Handle colors field - it could be a list or pipe-separated string
+            colors_value = product.get('colors', '')
+            if isinstance(colors_value, list):
+                first_color = colors_value[0] if colors_value else ''
+            else:
+                first_color = colors_value.split('|')[0] if colors_value else ''
+            
             suggestions = validator.get_name_suggestions(
                 original_name,
                 product.get('category', ''),
                 product.get('gender', ''),
-                product.get('colors', '').split('|')[0] if product.get('colors') else ''
+                first_color
             )
             
             if suggestions:

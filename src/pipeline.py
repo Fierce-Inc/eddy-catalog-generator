@@ -3,7 +3,7 @@
 import asyncio
 import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -19,14 +19,18 @@ from src.schema import Brand, Collection, Product, Review
 class CatalogPipeline:
     """Main pipeline for generating the complete catalog."""
     
-    def __init__(self, output_dir: str = "data"):
+    def __init__(self, output_dir: str = "data", brand_guide_filename: Optional[str] = None, brand_config_filename: Optional[str] = None):
         """Initialize the pipeline.
         
         Args:
             output_dir: Directory to save generated CSV files
+            brand_guide_filename: Optional brand guide filename inside the hardcoded `docs` directory
+            brand_config_filename: Optional brand configuration JSON filename inside the hardcoded `docs` directory
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
+        self.brand_guide_filename = brand_guide_filename
+        self.brand_config_filename = brand_config_filename
         
         # Load environment variables
         load_dotenv()
@@ -41,7 +45,8 @@ class CatalogPipeline:
         self.product_generator = ProductGenerator(
             temperature=float(os.getenv("TEMPERATURE_PRODUCT", "0.7")),
             batch_size=int(os.getenv("BATCH_SIZE", "50")),
-            max_retries=int(os.getenv("MAX_RETRIES", "3"))
+            max_retries=int(os.getenv("MAX_RETRIES", "3")),
+            brand_config_filename=self.brand_config_filename or "evergreen.json"
         )
         self.review_generator = ReviewGenerator(
             temperature=float(os.getenv("TEMPERATURE_REVIEW", "0.5")),
@@ -67,7 +72,7 @@ class CatalogPipeline:
         reviews_per_product = max(2, min(5, 10000 // total_products))  # 2-5 reviews per product
         total_reviews = total_products * reviews_per_product
         
-        print("🚀 Starting Fierce Evergreen Apparel Catalog Generation")
+        print("🚀 Starting Catalog Generation")
         print("=" * 60)
         print(f"📊 Generation Plan:")
         print(f"   • Brands: {brand_count}")
@@ -78,7 +83,7 @@ class CatalogPipeline:
         
         # Step 1: Load brand context
         print("📖 Loading brand context...")
-        brand_context = get_brand_context()
+        brand_context = get_brand_context(brand_guide_filename=self.brand_guide_filename)
         print(f"✅ Brand context loaded ({len(brand_context)} characters)")
         
         # Step 2: Generate brands
@@ -173,7 +178,7 @@ async def main():
     """Main entry point for the pipeline."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Generate Fierce Evergreen Apparel catalog")
+    parser = argparse.ArgumentParser(description="Generate synthetic catalog")
     parser.add_argument(
         "--out", 
         default="data", 
@@ -185,6 +190,16 @@ async def main():
         default=10000, 
         help="Number of products to generate (default: 10000)"
     )
+    parser.add_argument(
+        "--brand-guide",
+        default="brand_guide.md",
+        help="Brand guide filename inside docs/ (default: brand_guide.md)"
+    )
+    parser.add_argument(
+        "--brand-config",
+        default="evergreen.json",
+        help="Brand configuration JSON filename inside docs/ (default: evergreen.json)"
+    )
     
     args = parser.parse_args()
     
@@ -195,7 +210,11 @@ async def main():
         return
     
     # Run pipeline
-    pipeline = CatalogPipeline(output_dir=args.out)
+    pipeline = CatalogPipeline(
+        output_dir=args.out, 
+        brand_guide_filename=args.brand_guide,
+        brand_config_filename=args.brand_config
+    )
     await pipeline.run(total_products=args.products)
 
 

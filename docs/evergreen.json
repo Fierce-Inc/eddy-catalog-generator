@@ -1,0 +1,78 @@
+{
+  "gender_distribution": {
+    "women": 0.45,
+    "men": 0.45,
+    "unisex": 0.10
+  },
+  "product_categories": {
+    "Everyday Apparel": [
+      "Relaxed Denim",
+      "Stretch Chinos", 
+      "Essential Tees",
+      "Knit Polos",
+      "Tunic Shirts",
+      "Wrap Dresses"
+    ],
+    "Work & Evening Wear": [
+      "Tailored Blazers",
+      "Smart Joggers",
+      "Polished Midi Dresses",
+      "Stretch Dress Pants",
+      "Button-Down Shirts"
+    ],
+    "Everyday Outerwear": [
+      "City Trenches",
+      "Commuter Rain Jackets",
+      "Quilted Bombers",
+      "Lightweight Jackets",
+      "Cardigans"
+    ],
+    "Active & Outdoor Layers": [
+      "Packable Anoraks",
+      "Trail Leggings",
+      "Merino Base Layers",
+      "Brushed-Back Leggings",
+      "Performance Tees"
+    ],
+    "Accessories": [
+      "Beanies",
+      "Crossbody Bags",
+      "Scarves",
+      "Sunglasses",
+      "Belts",
+      "Hats"
+    ],
+    "Footwear": [
+      "Slip-On Sneakers",
+      "Low Hikers",
+      "Dressy Booties",
+      "City Hikers",
+      "Casual Loafers"
+    ]
+  },
+  "brand_colors": [
+    "Evergreen", "Ocean Blue", "Urban Mist", "Rust Peak",
+    "Charcoal", "Cream", "Navy", "Olive", "Burgundy", "Sage"
+  ],
+  "size_ranges": {
+    "women": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
+    "men": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
+    "unisex": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"]
+  },
+  "price_bands": {
+    "budget": [25, 75],
+    "mid": [75, 150],
+    "premium": [150, 300],
+    "luxury": [300, 500]
+  },
+  "fit_descriptions": [
+    "relaxed", "tailored", "slim", "oversized", "regular", 
+    "comfortable", "fitted", "loose", "modern", "classic"
+  ],
+  "sustainability_features": [
+    "Recycled polyester", "Organic cotton", "Tencel lyocell",
+    "Repreve fibers", "Piñatex", "Low-impact dyes",
+    "Circular design", "Repair-friendly construction",
+    "Biodegradable packaging", "Fair trade certified"
+  ]
+}

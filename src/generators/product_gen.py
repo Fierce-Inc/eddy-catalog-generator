@@ -12,10 +12,7 @@ from pydantic import SecretStr
 from src.schema import Product
 from src.prompts import (
     PRODUCT_GENERATION_PROMPT, 
-    GENDER_DISTRIBUTION,
-    PRODUCT_CATEGORIES,
-    BRAND_COLORS,
-    PRICE_BANDS
+    get_brand_constants
 )
 from src.utils.id_generator import IDGenerator
 from src.utils.name_validator import NameValidator, deduplicate_product_names
@@ -24,13 +21,14 @@ from src.utils.name_validator import NameValidator, deduplicate_product_names
 class ProductGenerator:
     """Generates product profiles using OpenAI and LangChain."""
     
-    def __init__(self, temperature: float = 0.7, batch_size: int = 50, max_retries: int = 3):
+    def __init__(self, temperature: float = 0.7, batch_size: int = 50, max_retries: int = 3, brand_config_filename: str = "evergreen.json"):
         """Initialize the product generator.
         
         Args:
             temperature: Temperature for generation (0.0-1.0)
             batch_size: Number of products to generate per API call
             max_retries: Maximum retry attempts for failed generations
+            brand_config_filename: Brand configuration JSON filename
         """
         self.llm = ChatOpenAI(
             model=os.getenv("MODEL", "gpt-4o-mini"),
@@ -39,6 +37,8 @@ class ProductGenerator:
         )
         self.batch_size = batch_size
         self.max_retries = max_retries
+        self.brand_config_filename = brand_config_filename
+        self.brand_constants = get_brand_constants(brand_config_filename)
         self.id_generator = IDGenerator()
         self.name_validator = NameValidator()
     
@@ -133,7 +133,7 @@ class ProductGenerator:
     def _get_gender_distribution(self, batch_count: int) -> Dict[str, int]:
         """Calculate gender distribution for a batch."""
         distribution = {}
-        for gender, ratio in GENDER_DISTRIBUTION.items():
+        for gender, ratio in self.brand_constants["GENDER_DISTRIBUTION"].items():
             count = int(batch_count * ratio)
             distribution[gender] = count
         
@@ -146,7 +146,7 @@ class ProductGenerator:
     
     def _select_categories(self, batch_count: int) -> List[str]:
         """Select product categories for a batch."""
-        all_categories = list(PRODUCT_CATEGORIES.keys())
+        all_categories = list(self.brand_constants["PRODUCT_CATEGORIES"].keys())
         selected = []
         
         for _ in range(batch_count):
@@ -177,9 +177,9 @@ class ProductGenerator:
                     categories=categories,
                     collection_id=collection_id,
                     brand_id=brand_id,
-                    brand_colors=BRAND_COLORS,
-                    min_price=PRICE_BANDS["budget"][0],
-                    max_price=PRICE_BANDS["luxury"][1],
+                    brand_colors=self.brand_constants["BRAND_COLORS"],
+                    min_price=self.brand_constants["PRICE_BANDS"]["budget"][0],
+                    max_price=self.brand_constants["PRICE_BANDS"]["luxury"][1],
                     product_ids=product_ids
                 )
                 

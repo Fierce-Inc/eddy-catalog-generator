@@ -1,6 +1,6 @@
 # Eddy Catalog Generator
 
-A synthetic catalog generator for Fierce Evergreen Apparel that creates realistic product data using OpenAI and LangChain, ensuring all content aligns with the brand guide.
+A synthetic catalog generator that creates realistic product data using OpenAI and LangChain, ensuring all content aligns with the provided brand guide.
 
 ## 🎯 Overview
 
@@ -10,7 +10,7 @@ This tool generates a complete synthetic catalog with:
 - **Products**: 10,000 SKUs with realistic details
 - **Reviews**: 50,000 customer reviews (5 per product)
 
-All content is generated using the Fierce Evergreen Apparel brand guide to ensure consistency with the brand's values, tone, and target audience.
+All content is generated using the provided brand guide to ensure consistency with the brand's values, tone, and target audience.
 
 ## 🚀 Quick Start
 
@@ -39,6 +39,9 @@ python -m src --out data/
 
 # Generate smaller catalog for testing
 python -m src --out data/ --products 100
+
+# Use a specific brand guide and configuration
+python -m src --out data/evergreen --brand-guide brand_guide_evergreen.md --brand-config evergreen.json
 ```
 
 ## 📁 Project Structure
@@ -46,12 +49,14 @@ python -m src --out data/ --products 100
 ```
 eddy-catalog-generator/
 ├── docs/
-│   └── brand_guide.md          # Brand identity and guidelines
+│   ├── brand_guide_evergreen.md # Example brand guide
+│   ├── brand_guide_vera_lux.md  # Example brand guide
+│   └── evergreen.json           # Brand configuration (colors, categories, etc.)
 ├── src/
 │   ├── schema.py               # Pydantic data models
 │   ├── utils/
 │   │   └── brand_context.py    # Brand guide loader & summarizer
-│   ├── prompts.py              # LangChain prompt templates
+│   ├── prompts.py              # LangChain prompt templates & config loader
 │   ├── generators/
 │   │   ├── brand_gen.py        # Brand generation
 │   │   ├── collection_gen.py   # Collection generation
@@ -82,6 +87,96 @@ eddy-catalog-generator/
 |-----------|---------|-------------|
 | `--out` | `data/` | Output directory for CSVs |
 | `--products` | `10000` | Number of products to generate |
+| `--brand-guide` | `brand_guide.md` | Brand guide filename inside docs/ directory |
+| `--brand-config` | `evergreen.json` | Brand configuration JSON filename inside docs/ directory |
+
+### Brand Configuration
+
+The `--brand-config` parameter specifies a JSON file containing brand-specific constants:
+
+- **Gender Distribution**: Target audience breakdown (women/men/unisex percentages)
+- **Product Categories**: Main categories and subcategories for products
+- **Brand Colors**: Color palette for products
+- **Size Ranges**: Available sizes for different genders
+- **Price Bands**: Budget, mid, premium, and luxury price ranges
+- **Fit Descriptions**: Available fit options
+- **Sustainability Features**: Eco-friendly features to include
+
+Example configuration structure:
+```json
+{
+  "gender_distribution": {
+    "women": 0.45,
+    "men": 0.45,
+    "unisex": 0.10
+  },
+  "product_categories": {
+    "Everyday Apparel": ["Relaxed Denim", "Essential Tees"],
+    "Work & Evening Wear": ["Tailored Blazers", "Smart Joggers"]
+  },
+  "brand_colors": ["Evergreen", "Ocean Blue", "Urban Mist"],
+  "price_bands": {
+    "budget": [25, 75],
+    "premium": [150, 300]
+  }
+}
+```
+
+## 📋 Brand Configuration Format
+
+The brand configuration JSON file defines all brand-specific parameters used during generation. Here's the complete structure:
+
+```json
+{
+  "gender_distribution": {
+    "women": 0.45,
+    "men": 0.45,
+    "unisex": 0.10
+  },
+  "product_categories": {
+    "Everyday Apparel": [
+      "Relaxed Denim",
+      "Stretch Chinos", 
+      "Essential Tees",
+      "Knit Polos",
+      "Tunic Shirts",
+      "Wrap Dresses"
+    ],
+    "Work & Evening Wear": [
+      "Tailored Blazers",
+      "Smart Joggers",
+      "Polished Midi Dresses",
+      "Stretch Dress Pants",
+      "Button-Down Shirts"
+    ]
+  },
+  "brand_colors": [
+    "Evergreen", "Ocean Blue", "Urban Mist", "Rust Peak",
+    "Charcoal", "Cream", "Navy", "Olive", "Burgundy", "Sage"
+  ],
+  "size_ranges": {
+    "women": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
+    "men": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"],
+    "unisex": ["XS", "S", "M", "L", "XL", "2X", "3X", "4X"]
+  },
+  "price_bands": {
+    "budget": [25, 75],
+    "mid": [75, 150],
+    "premium": [150, 300],
+    "luxury": [300, 500]
+  },
+  "fit_descriptions": [
+    "relaxed", "tailored", "slim", "oversized", "regular", 
+    "comfortable", "fitted", "loose", "modern", "classic"
+  ],
+  "sustainability_features": [
+    "Recycled polyester", "Organic cotton", "Tencel lyocell",
+    "Repreve fibers", "Piñatex", "Low-impact dyes",
+    "Circular design", "Repair-friendly construction",
+    "Biodegradable packaging", "Fair trade certified"
+  ]
+}
+```
 
 ## 📊 Output Files
 
@@ -111,13 +206,30 @@ The generator creates four CSV files:
 
 ## 🎨 Brand Integration
 
-The generator uses the Fierce Evergreen Apparel brand guide to ensure:
+The generator uses both the brand guide and configuration to ensure:
 
-- **Sustainability Focus**: Recycled materials, eco-friendly features
-- **Body Positivity**: Inclusive sizing (XS-4X), unretouched imagery
-- **Pacific Northwest Aesthetic**: Evergreen, Ocean Blue, Urban Mist colors
-- **Everyday Versatility**: Desk-to-dinner adaptability
-- **Empowerment**: Confidence-building messaging
+- **Brand Consistency**: All content aligns with brand values and identity
+- **Target Audience Alignment**: Products and messaging match brand positioning
+- **Aesthetic Coherence**: Visual and tonal elements reflect brand guidelines
+- **Value Integration**: Core brand values are embedded throughout the catalog
+- **Authentic Voice**: Content maintains the brand's unique personality and tone
+- **Configurable Parameters**: Colors, categories, pricing, and features match brand specifications
+
+### Creating Custom Brand Configurations
+
+1. **Copy the example**: Start with `docs/evergreen.json` as a template
+2. **Modify values**: Update colors, categories, pricing, and other brand-specific elements
+3. **Test configuration**: Use `--brand-config your_brand.json` to test your setup
+4. **Create brand guide**: Write a corresponding brand guide markdown file
+5. **Run generation**: Use both `--brand-guide` and `--brand-config` parameters
+
+Example for a luxury brand:
+```bash
+python -m src --out data/luxury \
+  --brand-guide brand_guide_luxury.md \
+  --brand-config luxury.json \
+  --products 5000
+```
 
 ## 🔧 Development
 
@@ -127,6 +239,19 @@ The generator uses the Fierce Evergreen Apparel brand guide to ensure:
 2. **Custom Prompts**: Extend `prompts.py` with new templates
 3. **Generation Logic**: Create new generator in `generators/`
 4. **Pipeline Integration**: Update `pipeline.py` orchestration
+5. **Brand Configurations**: Add new JSON configs in `docs/` directory
+
+### Brand Configuration Schema
+
+When creating new brand configurations, ensure your JSON includes all required fields:
+
+- `gender_distribution`: Object with women/men/unisex percentages
+- `product_categories`: Object with category names and subcategory arrays
+- `brand_colors`: Array of color names
+- `size_ranges`: Object with gender-specific size arrays
+- `price_bands`: Object with band names and [min, max] price arrays
+- `fit_descriptions`: Array of fit description strings
+- `sustainability_features`: Array of sustainability feature strings
 
 ### Testing
 
@@ -179,6 +304,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **Memory Issues with Large Catalogs**
 - Reduce batch size in environment variables
 - Generate smaller catalogs for testing
+
+**Brand Configuration Errors**
+- Ensure JSON file exists in `docs/` directory
+- Validate JSON syntax using a JSON validator
+- Check that all required fields are present in configuration
+- Verify price bands use arrays `[min, max]` not objects
 
 ### Getting Help
 

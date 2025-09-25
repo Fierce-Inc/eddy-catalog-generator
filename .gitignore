@@ -274,7 +274,3 @@ exports/
 *.bak
 *.backup
 *.old
-
-# Generated data files
-data/
-
