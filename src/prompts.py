@@ -211,8 +211,8 @@ Each review should follow this JSON structure, using the provided IDs in order:
 
 Guidelines:
 - Mix of ratings (mostly 4-5 stars, some 3, few 1-2)
-- Mention sustainability, fit, comfort, versatility
-- Include Pacific Northwest lifestyle references
+- Mention fit, comfort, versatility, sustainability, etc.
+- Include lifestyle references or anecdotes appropriate to the brand's target audience
 - Vary review length and helpfulness
 - Use realistic customer names
 - Use the provided review IDs in the exact order they appear in the list
