@@ -1,0 +1,69 @@
+{
+  "store": {
+    "store_name": "Vera Lux",
+    "tagline": "Truth in Luxury.",
+    "mission": "To craft bold, sustainable luxury that empowers women to express their truth — through garments and accessories that radiate beauty, integrity, and confidence.",
+    "founders": [
+      {
+        "name": "Isolde Maren",
+        "role": "Creative Visionary",
+        "background": "Descended from European glass artisans, inspired by light, beauty, and storytelling."
+      },
+      {
+        "name": "Danielle Brooks",
+        "role": "Pragmatic Entrepreneur",
+        "background": "Former New York fashion buyer, expert in forecasting trends and accessible exclusivity."
+      }
+    ],
+    "founding_story": "Born from a spirited debate at The Met about whether luxury could exist without illusion, Vera Lux unites luminous artistry with pragmatic business sense to deliver truth-infused glamour.",
+    "values": [
+      "Empowered Elegance",
+      "Sustainable Innovation",
+      "Fearless Boldness",
+      "Integrity of Craft",
+      "Individual Expression"
+    ],
+    "personality_tone": {
+      "voice": "Fierce, unapologetic, and empowering — with a sharp edge of sophistication.",
+      "flavor": "New York flash meets timeless artistry.",
+      "imagery": "Manhattan skylines at twilight, marble-and-glass interiors, women framed by urban parks and iconic architecture."
+    },
+    "target_customer": {
+      "personas": [
+        "Art-inspired urbanite",
+        "Confident entrepreneur"
+      ],
+      "age_range": "30-50",
+      "values": [
+        "Prestige",
+        "Quality",
+        "Sustainability",
+        "Self-expression"
+      ]
+    },
+    "product_focus": [
+      "Couture Apparel",
+      "Ready-to-Wear",
+      "Footwear",
+      "Jewelry",
+      "Bags & Belts",
+      "Scarves",
+      "Perfume"
+    ],
+    "brand_colors": [
+      "Garnet Red (#7C0D28)",
+      "Obsidian Black (#1A1A1A)",
+      "Gold Veil (#D4AF37)",
+      "Pearl White (#F3F2F0)",
+      "Midnight Blue (#1B2D4F)"
+    ],
+    "iconography": "Stylized glass shard refracting light into a V motif",
+    "differentiators": [
+      "Truth-Driven Luxury",
+      "Art-Inspired Design",
+      "Sustainable Craft",
+      "Limited Collections"
+    ],
+    "brand_story_one_sentence": "Born from glass and grit, Vera Lux illuminates New York with fierce, sustainable luxury that empowers women to wear their truth."
+  }
+}

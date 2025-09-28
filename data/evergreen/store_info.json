@@ -1,0 +1,65 @@
+{
+  "store": {
+    "store_name": "Fierce Evergreen Apparel",
+    "tagline": "Confidence for Every‑Day Adventure.",
+    "mission": "To empower every body to live, work, and play—confidently and sustainably—through apparel that unites Pacific‑Northwest inspiration with timeless, everyday style.",
+    "founders": [
+      {
+        "name": "Stella Reed",
+        "role": "Co‑Founder",
+        "background": "Minnesota prairie dreamer; values comfort, function, and planet‑minded design."
+      },
+      {
+        "name": "Maya Carter",
+        "role": "Co‑Founder",
+        "background": "Boston harbor adventurer; blends urban polish with outdoor readiness."
+      }
+    ],
+    "founding_story": "Stella and Maya met at Seattle’s Ballard Farmers Market under a rain‑spattered awning. They sketched a brand where style, sustainability, and body positivity walk hand‑in‑hand—outfitting eco‑conscious customers from coffee runs to gallery strolls.",
+    "values": [
+      "Sustainability First",
+      "Body Positivity & Inclusivity",
+      "Function × Fashion",
+      "Empowerment",
+      "Transparency"
+    ],
+    "personality_tone": {
+      "voice": "Classic, trustworthy, with playful confidence.",
+      "flavor": "Pacific‑Northwest freshness—espresso energy and drizzle‑proof optimism.",
+      "imagery": "City skylines framed by firs; neighborhood parks, bike lanes, and cozy cafés."
+    },
+    "target_customer": {
+      "personas": [
+        "Eco‑minded urban professional",
+        "Weekend adventurer"
+      ],
+      "age_range": "25‑45",
+      "values": [
+        "Effortless style",
+        "Ethical production",
+        "Comfort and versatility"
+      ]
+    },
+    "product_focus": [
+      "Everyday Apparel",
+      "Work & Evening Wear",
+      "Everyday Outerwear",
+      "Active & Outdoor Layers",
+      "Accessories",
+      "Footwear"
+    ],
+    "brand_colors": [
+      "Evergreen (#0E3D32)",
+      "Ocean Blue (#13577B)",
+      "Urban Mist (#9BB7C6)",
+      "Rust Peak (#C25A33)"
+    ],
+    "iconography": "Stylized fir leaf forming a subtle power‑symbol arrow",
+    "differentiators": [
+      "Eco‑Innovative Materials (Piñatex®, Repreve®)",
+      "Size‑Inclusive Fit System across men’s, women’s & unisex",
+      "Repair & Renew lifetime repairs and recycling"
+    ],
+    "brand_story_one_sentence": "Born in Seattle’s rain‑kissed streets, Fierce Evergreen Apparel designs planet‑friendly fashion that lets every body live fiercely—every day."
+  }
+}
